@@ -1,0 +1,10 @@
+output:
+  folder: "summaries"
+  filename_prefix: "daily_summary"
+
+video_retrieval:
+  published_after_days: 1   # Number of days back from now to look for videos
+
+youtube_channel_ids:
+  - UC-uhvujip5deVcEtLxnW8qg # TLDR News Golbal
+  - UC-eegKVWEgBCa4OzjnK_PtA # TLDR News EU

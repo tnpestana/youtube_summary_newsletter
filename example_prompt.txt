@@ -1,0 +1,99 @@
+# Agent: Editorial Assistant
+## Task: 
+        You are a professional editorial assistant. Your task is to convert a raw transcript into a polished, human-readable article.
+
+        ✍️ Writing guidelines:
+        - Write in **long, well-structured paragraphs** with smooth transitions.
+        - Use natural, flowing language and complete, complex sentences.
+        - Maintain a **professional tone** suitable for news or analysis.
+        - Include a **clear, descriptive title** at the top as a Markdown `# H1` heading.
+
+        🧱 Formatting rules:
+        - Use **GitHub Flavored Markdown** (GFM), following the **CommonMark** spec exactly: https://commonmark.org/
+        - Use:
+            - `#` for headings
+            - Blank lines for paragraph breaks
+            - `**bold**`, `*italic*` for emphasis
+            - `-` or `*` for bullet points
+            - Triple backticks for code blocks
+            - `>` for blockquotes
+            - `[label](url)` for links
+        - ❌ Do **not** use any HTML tags or styling.
+
+        📋 Content rules:
+        - 🔒 **Preserve all factual information.**
+        - 🚫 **Remove all promotional content or sponsorship mentions.**
+        - ❌ Do not hallucinate, assume, or fabricate any information.
+
+        📦 Output rules:
+        - ✅ Only output the **final Markdown-formatted article**.
+        - ❌ Do **not** include any system messages, reasoning, thoughts, or explanations.
+        - ❌ Do not include text like: “Thought:”, “Observation:”, or similar.
+
+        ✅ Return only the complete, final Markdown article.
+    
+
+Transcript:
+Throughout the 2024 US presidential campaign, US President Donald Trump repeatedly said he would bring peace to Ukraine, end the war in Gaza, 
+and pull the US back from foreign conflicts around the globe. And in his inaugural address back in January, Trump said, "My proudest legacy will
+be that of a peacemaker and unifier." But now, five months into Trump's presidency, the Russia Ukraine war is well into its third year with no 
+peace deal in sight. Israel's military action in Gaza has only escalated and it looks like the US soon could become directly involved in another
+conflict in the Middle East as Iran and Israel continue attacking each other. So, in this video, we'll recap Trump's pledges to bring peace, 
+whether he's failed as a peacemaker, and whether this could change. [Music] We're getting ever closer to a million subscribers and 68% of you 
+haven't even subscribed yet. So, lend us a hand and subscribe today. First, let's revisit presidential election campaign. While the then US 
+president and Democratic candidate Joe Biden was facing criticism for his handling of the war in Gaza, having been dubbed genocide Joe by some 
+pro Palestine protesters, Republican candidate Donald Trump took the opportunity to present himself as someone who would cut deals and bring 
+peace to Gaza and Ukraine, halt Iran's nuclear program, and pull the US back from its involvement in foreign conflicts under his America first 
+foreign policy. During the campaign trail, Trump repeatedly pledged to end the war in Ukraine within 24 hours. And even said as far back as July
+2023, before I even arrive at the Oval Office, we will have the horrible war between Russia and Ukraine settled. Similarly, while Trump did 
+spend most of the campaign insisting he was Israel's best friend, he also said that Israel was quote losing the PR war and suggested in April 
+that Israel should quote get back to peace and stop killing people. Trump's peacemaker stance was popular both with supporters of his 
+isolationist foreign policy and with younger voters who were more likely to oppose the US's role in supporting Israel militarily. Trump's pledge
+to pull the US back from foreign conflict also played well with Americans who were tired of decades of military interventions abroad which have 
+led to the deaths of thousands of US service members with Trump referring to the US's role in the Middle East and Afghanistan as the US's 
+forever wars. Moreover, Yugov polling from throughout the US election campaign showed that while foreign policy wasn't that important to voters 
+as an issue compared to the economy, healthcare or immigration, Trump retained a small but consistent lead over Democratic candidate Camela 
+Harris when it came to foreign policy with a larger lead on specific issues like Ukraine and Israel. Anyway, in his November victory speech, 
+Trump hit back at critics and repeated his peacemaker claim saying they said he will start a war. I'm not going to start a war. I'm going to 
+stop wars. However, since taking office, it's become clear that peacemaking isn't as easy as Trump expected. On Ukraine, there were some hopes 
+for a ceasefire in early March after the US successfully pressured Ukraine into agreeing to a 30-day ceasefire proposal along the front lines, 
+in the sky, on energy infrastructure, and at sea, which Ukraine's EU allies were opposed to, as they thought a land ceasefire would undermine 
+Ukraine's territorial integrity, and give Russia time to rearm. But Russia only agreed to a partial ceasefire limited to strikes on energy 
+infrastructure, which it's effectively ignored anyway. and the severity of Russia's assault has actually escalated in recent weeks. Secondly, on
+Gaza, Trump's peacemaking efforts appear to have had the opposite effect. Not only has Israel's military action continued, but in recent months,
+it's escalated further with the ongoing Operation Gideon's chariots, which began in early May, leading to widespread international condemnation.
+Indeed, in his own words, Israeli Finance Minister Bezel Smosich said Israel's aims were destroying everything that's left of Gaza. All in all, 
+Trump's presidency appears to have emboldened Netanyahu, who appears confident that he can continue his attacks on Gaza, the West Bank, and now 
+Iran, too, with US backing. Aside from failed peacemaking in Ukraine and Gaza, Trump has also bombed Yemen's Houthi rebels, launched air strikes
+on Somalia, and threatened to use military force to invade Greenland, which is somewhat surprising from a self-styled peacemaker. Now, you might
+say we're being too harsh to Trump here. After all, we're only 5 months into his presidency, and it's worth mentioning that Biden didn't do much
+better on the peace front. Nonetheless, we think it is a fair criticism given Trump's focus on speedy peace deals during the campaign and the 
+fact that wars have actually gotten worse since he took office. So, why is Trump so bad at deals? Well, as we see it, there were at least three 
+structural reasons. First, the Trump team's impatience. As he promised during the campaign, Trump has tried to rush other parties into quick 
+deals, hoping that US set deadlines will force them into making the necessary concessions. However, when these deadlines pass, the only thing 
+that usually happens is that Trump just loses interest. This obviously happens with the Liberation Day tariffs, but it also happened on multiple
+occasions during the Ukraine negotiations. Trump set a whole load of deadlines, but they passed without anything happening. In January, Trump's 
+envoy, Keith Kellogg, mentioned a 100-day deadline, which was then extended to 180 days. In February, Trump apparently said he wanted to cease 
+fire by Easter, but this didn't happen. And then in late May, Trump said Putin had two weeks to demonstrate a commitment to peace. But this 
+deadline has since passed and again nothing's happened. Second, the Trump team's myopic focus on economic issues. Trump is always squarely 
+focused on who's getting value for money in negotiations and often dangles the prospect of economic normalization, as he did with both Russia 
+and Iran, as some sort of bargaining chip. Not only does this overlook the fact that in many of these wars, the parties are fighting over deeper
+issues that can't be resolved by cash, it's also been exploited by negotiating parties. Zalinski massively overstated the value of Ukraine's 
+rare earth deposits. Russian negotiators overestimated the losses suffered by American businesses who left Russia. And Netanyahu got Trump to 
+agree to his plan to expel Palestinians out of Gaza by suggesting it could be redeveloped into some sort of Mediterranean Riviera in the 
+meantime. Third, and finally, Trump's apparent affinity for strong men, including most obviously Vladimir Putin and Benjamin Netanyahu, which 
+has encouraged them to do classic strongman things, even if they undermine peace negotiations. The New York Times even reported on Tuesday that 
+Trump didn't want to get involved in Iran until he awoke to Fox News coverage of what it was portraying as Israel's military genius, whereupon 
+he decided he needed to take some credit. Now, again, none of this is in defense of Biden, who was also pretty rubbish at negotiating peace 
+deals. Nonetheless, Trump's record so far is pretty terrible, and there were clearly structural reasons to be pessimistic about the future. Like
+a lot of things right now, this topic is increasingly complex and everchanging. And here at TLDDR, we're committed to learning more to help us 
+understand the world around us. Luckily for us, our sponsor this week, Brilliant, helps us do just this. We know that learning a little every 
+day is one of the most important things you can do, both for personal and professional growth. And Brilliant helps you get smarter in minutes a 
+day. You can even perfect your skills wherever you are, whether you're on the go or winding down. It's the opposite of mindless scrolling. 
+Brilliant has the perfect mix of engaging problems, competitive features, and daily encouragement that keeps you motivated and on track. For 
+instance, Brilliant's data science content uses real world data to train you to see trends and make better informed decisions. No matter your 
+level of skill, these courses are perfect to start or continue learning data analysis with a full suite of content covering data visualizations,
+algorithms, regression models, and more. Learn how to pass and visualize massive data sets from brands you know to make them easier to 
+interpret. Plus, all content on Brilliant is crafted by an award-winning team of teachers, researchers, and professionals from Stanford, MIT, 
+Caltech, Microsoft, Google, and more. To try Brilliant for free, visit brilliant.org/tlddr. Scan the QR code on screen or click the link in the 
+description. By doing so, you'll also get 20% off an annual premium subscription, and they'll know you came from us, which really helps us out.
