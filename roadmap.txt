@@ -1,8 +1,3 @@
+- experiment with non-local LLMs
 - scheduler every 24h
-    - I already have the code for this (scheduler.py) but still need to understand how to handle Ollama
-- App bundle for easy of use to non technical people
-- Tray app
-    - As much information/funcitonality as possible in the tray icon 
-        - start/stop
-        - status
-        - time until next run
+    - GitHub Actions

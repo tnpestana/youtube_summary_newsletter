@@ -1,9 +1,6 @@
-apscheduler
 crewai
 markdown2
 ollama
-pillow
-pystray
 python-dotenv
 requests
 youtube-transcript-api
