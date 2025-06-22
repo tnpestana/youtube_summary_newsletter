@@ -6,6 +6,7 @@ from agents.transcript_to_article_agent import run_summary
 from dotenv import load_dotenv
 from tools.email_utils import send_email
 from tools.file_utils import save_to_file
+from tools.ollama_tools import start_ollama, wait_for_ollama_ready, stop_ollama
 from tools.text_utils import concatenate_text
 from tools.youtube_utils import get_recent_video_ids, get_transcript
 from pathlib import Path
@@ -36,6 +37,9 @@ def get_published_after_date(days: int) -> str:
     return published_after
 
 def process_channels(channel_ids):
+    days_back = APP_CONFIG.get("video_retrieval", {}).get("published_after_days", 1)
+    published_after = get_published_after_date(days_back)
+   
     all_articles = []
 
     for channel_id in channel_ids:
@@ -61,15 +65,8 @@ def process_channels(channel_ids):
 
     return all_articles
 
-# MARK: Entry point
-
-if __name__ == "__main__":
-    if not YOUTUBE_API_KEY:
-        raise EnvironmentError("Please set the YOUTUBE_API_KEY environment variable.")
-
+def summarize_articles():
     channel_ids = APP_CONFIG.get("youtube_channel_ids", [])
-    days_back = APP_CONFIG.get("video_retrieval", {}).get("published_after_days", 1)
-    published_after = get_published_after_date(days_back)
 
     results = process_channels(channel_ids)
     articles = [item["article"] for item in results]
@@ -88,3 +85,24 @@ if __name__ == "__main__":
         print(f"--- Channel: {result['channel_id']} | Video: {result['video_id']} ---")
         print(result['article'])
         print("\n" + "="*80 + "\n")
+
+# MARK: Entry point
+
+if __name__ == "__main__":
+    if not YOUTUBE_API_KEY:
+        raise EnvironmentError("Please set the YOUTUBE_API_KEY environment variable.")
+    
+    ollama_proc = start_ollama()
+
+    try:
+        if not wait_for_ollama_ready():
+            raise RuntimeError("Ollama did not start in time.")
+
+        summarize_articles()
+
+    except Exception as e:
+        print("❌ Error during execution:", e)
+    finally:
+        stop_ollama(ollama_proc)
+
+    
