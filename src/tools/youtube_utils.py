@@ -3,7 +3,7 @@ import requests
 from datetime import datetime, timedelta
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 
-def get_recent_video_ids(channel_id, api_key, published_after=None):
+def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]:
     if published_after is None:
         published_after = (datetime.now() - timedelta(days=1)).isoformat("T") + "Z"
 

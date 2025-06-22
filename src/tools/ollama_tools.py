@@ -1,19 +1,30 @@
 import subprocess
 import time
 import signal
-import sys
+
+from contextlib import contextmanager
+
+@contextmanager
+def managed_ollama():
+    proc = start_ollama()
+    try:
+        if not wait_for_ollama_ready():
+            raise RuntimeError("Ollama did not start in time.")
+        yield
+    finally:
+        stop_ollama(proc)
 
 def start_ollama():
-    print("Starting Ollama...")
+    print("🦙 Starting Ollama...")
     return subprocess.Popen(["ollama", "serve"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 def stop_ollama(process):
-    print("Stopping Ollama...")
+    print("🦙 Stopping Ollama...")
     process.send_signal(signal.SIGINT)  # Gracefully stop with Ctrl+C signal
     try:
         process.wait(timeout=10)
     except subprocess.TimeoutExpired:
-        print("Force killing Ollama...")
+        print("🦙 Force killing Ollama...")
         process.kill()
 
 def wait_for_ollama_ready(timeout=30):
