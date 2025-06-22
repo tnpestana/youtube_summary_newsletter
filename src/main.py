@@ -1,30 +1,37 @@
 import datetime
 import os
 import yaml
-from dotenv import load_dotenv
-from tools.youtube.fetch_video_ids import get_recent_video_ids
-from tools.youtube.fetch_transcripts import get_transcript
-from tools.concatenate_articles import concatenate_text
-from tools.save_articles import save_to_file
-from tools.send_email import send_email
-from agents.transcript_to_article_agent import run_summary
 
-# -- ENV --------------------------------------------------
-load_dotenv()
+from agents.transcript_to_article_agent import run_summary
+from dotenv import load_dotenv
+from tools.email_utils import send_email
+from tools.file_utils import save_to_file
+from tools.text_utils import concatenate_text
+from tools.youtube_utils import get_recent_video_ids, get_transcript
+from pathlib import Path
+
+# MARK: Loading
+
+current_file = Path(__file__).resolve()
+src_dir = current_file.parent
+project_root = src_dir.parent
+
+env_path = project_root / ".env"
+load_dotenv(dotenv_path=env_path)
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
 RECEPIENT_EMAIL = os.getenv("RECEPIENT_EMAIL")
 
-# -- MAIN PIPELINE ----------------------------------------------
-def load_config(filepath="config/config.yaml"):
-    with open(filepath, "r", encoding="utf-8") as f:
-        config = yaml.safe_load(f)
-    return config
+yaml_path = project_root / "config" / "config.yaml"
+with open(yaml_path, "r") as f:
+    APP_CONFIG = yaml.safe_load(f)
+
+# MARK: Main pipeline
 
 def get_published_after_date(days: int) -> str:
-    now = datetime.datetime.utcnow()
+    now = datetime.datetime.now()
     published_after = (now - datetime.timedelta(days)).isoformat("T") + "Z"
     return published_after
 
@@ -54,18 +61,17 @@ def process_channels(channel_ids):
 
     return all_articles
 
-# -- ENTRY POINT ------------------------------------------------
+# MARK: Entry point
+
 if __name__ == "__main__":
     if not YOUTUBE_API_KEY:
         raise EnvironmentError("Please set the YOUTUBE_API_KEY environment variable.")
 
-    config = load_config()
-
-    channel_ids = config.get("youtube_channel_ids", [])
-    days_back = config.get("video_retrieval", {}).get("published_after_days", 1)
+    channel_ids = APP_CONFIG.get("youtube_channel_ids", [])
+    days_back = APP_CONFIG.get("video_retrieval", {}).get("published_after_days", 1)
     published_after = get_published_after_date(days_back)
 
-    results = process_channels(channel_ids, after=published_after)
+    results = process_channels(channel_ids)
     articles = [item["article"] for item in results]
     markdown = concatenate_text(articles)
     

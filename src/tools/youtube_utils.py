@@ -1,11 +1,11 @@
-# fetch_video_ids.py
-
 import requests
+
 from datetime import datetime, timedelta
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
 
 def get_recent_video_ids(channel_id, api_key, published_after=None):
     if published_after is None:
-        published_after = (datetime.utcnow() - timedelta(days=1)).isoformat("T") + "Z"
+        published_after = (datetime.now() - timedelta(days=1)).isoformat("T") + "Z"
 
     base_url = "https://www.googleapis.com/youtube/v3/search"
     video_ids = []
@@ -35,3 +35,14 @@ def get_recent_video_ids(channel_id, api_key, published_after=None):
             break
 
     return video_ids
+
+def get_transcript(video_id, lang='en'):
+    try:
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+        return " ".join([t["text"] for t in transcript])
+    except TranscriptsDisabled:
+        return "[Transcript disabled]"
+    except NoTranscriptFound:
+        return "[Transcript not available]"
+    except Exception as e:
+        return f"[Error fetching transcript: {str(e)}]"

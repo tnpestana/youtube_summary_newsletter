@@ -1,7 +1,8 @@
-from pystray import Icon, Menu, MenuItem
-from PIL import Image, ImageDraw
 import threading
 import time
+
+from PIL import Image, ImageDraw
+from pystray import Icon, Menu, MenuItem
 
 running = False
 
