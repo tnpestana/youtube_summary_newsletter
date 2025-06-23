@@ -52,7 +52,7 @@ def get_video_ids(channel_ids: list[str], days_back: int) -> list[str]:
     
     return all_video_ids
 
-def summarize_videos(video_ids: list[str]) -> list[str]:
+def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
     articles = []
     for video_id in video_ids:
         print(f"📹 Processing video: {video_id}")
@@ -68,7 +68,7 @@ def summarize_videos(video_ids: list[str]) -> list[str]:
 
     return articles
 
-def deliver_articles(articles: list[str]):
+def deliver_articles(articles: list[str], prefix: str):
     markdown = concatenate_text(articles)
     save_to_file(markdown)
     send_email(markdown, RECEPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
@@ -81,11 +81,14 @@ if __name__ == "__main__":
     
     channel_ids = APP_CONFIG.get("youtube_channel_ids", [])
     days_back = APP_CONFIG.get("video_retrieval", {}).get("published_after_days", 1)
+    llm_model = APP_CONFIG.get("llm", {}).get("model")
+    llm_provider = APP_CONFIG.get("llm", {}).get("provider")
+    llm = f"{llm_provider}/{llm_model}"
     
     with managed_ollama():
         video_ids = get_video_ids(channel_ids, days_back)
-        articles = summarize_videos(video_ids)
-        deliver_articles(articles)
+        articles = summarize_videos(video_ids, llm)
+        deliver_articles(articles, prefix=llm_model)
         
     print("✅ Done.")
     

@@ -1,7 +1,5 @@
 from crewai import Agent, Task, Crew
 
-llm = "ollama/llama3:latest"
-
 editorial_prompt = (
     """
         You are a professional editorial assistant. Your task is to convert a raw transcript into a polished, human-readable article.
@@ -39,7 +37,7 @@ editorial_prompt = (
     """
 )
 
-def run_summary(transcript: str) -> str:
+def run_summary(transcript: str, llm: str) -> str:
     editor_agent = Agent(
         role="Editorial Assistant",
         goal="Rewrite transcripts into accurate, well-structured articles",
