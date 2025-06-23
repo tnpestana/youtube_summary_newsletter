@@ -16,9 +16,12 @@ from pathlib import Path
 current_file = Path(__file__).resolve()
 src_dir = current_file.parent
 project_root = src_dir.parent
-
 env_path = project_root / ".env"
-load_dotenv(dotenv_path=env_path)
+
+if not os.path.exists(env_path):
+    raise FileNotFoundError(f"Missing .env file at {env_path}. Copy from .env.template and fill in your values.")
+else:
+    load_dotenv(dotenv_path=env_path)
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
