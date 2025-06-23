@@ -10,5 +10,4 @@ youtube_channel_ids:
   - UC-eegKVWEgBCa4OzjnK_PtA # TLDR News EU
   - UCz_3xlMTVUYYTQqCfh9lD7w # TLDR Daily
 
-translation:
-  language: en
+output_language: en

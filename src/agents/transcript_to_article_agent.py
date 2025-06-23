@@ -4,7 +4,7 @@ llm = "ollama/llama3:latest"
 
 editorial_prompt = (
     """
-        You are a professional editorial assistant. Your task is to convert a raw transcript into a polished, human-readable article.
+        You are a professional editorial assistant. Your task is to convert a raw transcript into a polished, human-readable article in {language}.
 
         ✍️ Writing guidelines:
         - Write in **long, well-structured paragraphs** with smooth transitions.
@@ -35,11 +35,11 @@ editorial_prompt = (
         - ❌ Do **not** include any system messages, reasoning, thoughts, or explanations.
         - ❌ Do not include text like: “Thought:”, “Observation:”, or similar.
 
-        ✅ Return only the complete, final Markdown article.
+        ✅ Return only the complete, final Markdown article in {language}.
     """
 )
 
-def run_summary(transcript: str) -> str:
+def run_summary(transcript: str, language: str = "en") -> str:
     editor_agent = Agent(
         role="Editorial Assistant",
         goal="Rewrite transcripts into accurate, well-structured articles",
@@ -50,8 +50,8 @@ def run_summary(transcript: str) -> str:
     )
     
     task = Task(
-        description=f"{editorial_prompt}\n\nTranscript:\n{transcript}",
-        expected_output="A well-formatted article without any promotional content.",
+        description=f"{editorial_prompt.format(language=language)}\n\nTranscript:\n{transcript}",
+        expected_output=f"A well-formatted article in {language} without any promotional content.",
         agent=editor_agent
     )
 
