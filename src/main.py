@@ -3,6 +3,7 @@ import os
 import yaml
 
 from agents.transcript_to_article_agent import run_summary
+from agents.translator_agent import run_translation
 from dotenv import load_dotenv
 from tools.email_utils import send_email
 from tools.file_utils import save_to_file
@@ -32,7 +33,9 @@ yaml_path = project_root / "config" / "config.yaml"
 with open(yaml_path, "r") as f:
     APP_CONFIG = yaml.safe_load(f)
 
-OUTPUT_LANG = APP_CONFIG.get("output_language", "en")
+TRANSLATION_CFG = APP_CONFIG.get("translation", {})
+TRANSLATE_LANG = TRANSLATION_CFG.get("language", "en-US")
+SUMMARY_LANG = "en-US"
 
 # MARK: Main pipeline
 
@@ -65,7 +68,11 @@ def summarize_videos(video_ids: list[str]) -> list[str]:
             continue
 
         print("🧠 Summarizing transcript with CrewAI agent...")
-        article = run_summary(transcript, OUTPUT_LANG)
+        article = run_summary(transcript, SUMMARY_LANG)
+
+        if TRANSLATE_LANG.lower() != SUMMARY_LANG.lower():
+            print("🌐 Translating article...")
+            article = run_translation(article, TRANSLATE_LANG)
 
         articles.append(article)
 

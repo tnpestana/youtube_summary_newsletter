@@ -35,11 +35,11 @@ editorial_prompt = (
         - ❌ Do **not** include any system messages, reasoning, thoughts, or explanations.
         - ❌ Do not include text like: “Thought:”, “Observation:”, or similar.
 
-        ✅ Return only the complete, final Markdown article in {language}.
+        ✅ Return only the complete, final Markdown article in the {language} language.
     """
 )
 
-def run_summary(transcript: str, language: str = "en") -> str:
+def run_summary(transcript: str, language: str = "en-US") -> str:
     editor_agent = Agent(
         role="Editorial Assistant",
         goal="Rewrite transcripts into accurate, well-structured articles",

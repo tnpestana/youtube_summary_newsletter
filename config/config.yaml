@@ -10,4 +10,6 @@ youtube_channel_ids:
   - UC-eegKVWEgBCa4OzjnK_PtA # TLDR News EU
   - UCz_3xlMTVUYYTQqCfh9lD7w # TLDR Daily
 
-output_language: en
+translation:
+  # Language code used for translating final articles, e.g. en-US or pt-BR
+  language: en-US
