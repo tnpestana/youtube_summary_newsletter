@@ -1,6 +1,7 @@
 crewai
+groq
+langchain-groq
 markdown2
-ollama
 python-dotenv
 requests
 youtube-transcript-api

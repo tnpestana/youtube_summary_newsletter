@@ -11,5 +11,5 @@ youtube_channel_ids:
   - UCz_3xlMTVUYYTQqCfh9lD7w # TLDR Daily
 
 llm:
-  provider: "ollama"
-  model: "deepseek-r1:7b"
+  provider: "groq"
+  model: "llama-3.1-8b-instant"

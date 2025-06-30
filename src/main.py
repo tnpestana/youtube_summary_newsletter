@@ -6,7 +6,7 @@ from agents.transcript_to_article_agent import run_summary
 from dotenv import load_dotenv
 from tools.email_utils import send_email
 from tools.file_utils import save_to_file
-from tools.ollama_tools import managed_ollama
+from tools.groq_tools import managed_groq
 from tools.text_utils import concatenate_text
 from tools.youtube_utils import get_recent_video_ids, get_transcript
 from pathlib import Path
@@ -56,21 +56,28 @@ def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
     articles = []
     for video_id in video_ids:
         print(f"📹 Processing video: {video_id}")
-        transcript = get_transcript(video_id)
+        try:
+            transcript = get_transcript(video_id)
 
-        if transcript.startswith("["):
-            print(f"⚠️ Skipping video due to transcript issue: {transcript}")
+            if transcript.startswith("["):
+                print(f"⚠️ Skipping video due to transcript issue: {transcript}")
+                continue
+
+            print("🧠 Summarizing transcript with CrewAI agent...")
+            article = run_summary(transcript, llm_model)
+            articles.append(article)
+            print(f"✅ Successfully processed video: {video_id}")
+            
+        except Exception as e:
+            print(f"❌ Failed to process video {video_id}: {type(e).__name__}: {e}")
+            print(f"⏩ Continuing with next video...")
             continue
-
-        print("🧠 Summarizing transcript with CrewAI agent...")
-        article = run_summary(transcript)
-        articles.append(article)
 
     return articles
 
 def deliver_articles(articles: list[str], prefix: str):
     markdown = concatenate_text(articles)
-    save_to_file(markdown)
+    save_to_file(markdown, prefix)
     send_email(markdown, RECEPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
 
 # MARK: Entry point
@@ -79,13 +86,18 @@ if __name__ == "__main__":
     if not YOUTUBE_API_KEY:
         raise EnvironmentError("Please set the YOUTUBE_API_KEY environment variable.")
     
+    # Validate Groq API key
+    groq_api_key = os.getenv("GROQ_API_KEY")
+    if not groq_api_key:
+        raise EnvironmentError("Please set the GROQ_API_KEY environment variable.")
+    
     channel_ids = APP_CONFIG.get("youtube_channel_ids", [])
     days_back = APP_CONFIG.get("video_retrieval", {}).get("published_after_days", 1)
     llm_model = APP_CONFIG.get("llm", {}).get("model")
     llm_provider = APP_CONFIG.get("llm", {}).get("provider")
     llm = f"{llm_provider}/{llm_model}"
     
-    with managed_ollama():
+    with managed_groq():
         video_ids = get_video_ids(channel_ids, days_back)
         articles = summarize_videos(video_ids, llm)
         deliver_articles(articles, prefix=llm_model)
