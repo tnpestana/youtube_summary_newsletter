@@ -1,7 +1,3 @@
-output:
-  folder: "summaries"
-  filename_prefix: "daily_summary"
-
 video_retrieval:
   published_after_days: 1 # Number of days back from now to look for videos
 

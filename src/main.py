@@ -5,7 +5,6 @@ import yaml
 from agents.transcript_to_article_agent import run_summary
 from dotenv import load_dotenv
 from tools.email_utils import send_email
-from tools.file_utils import save_to_file
 from tools.groq_tools import managed_groq
 from tools.text_utils import concatenate_text
 from tools.youtube_utils import get_recent_video_ids, get_transcript
@@ -75,9 +74,8 @@ def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
 
     return articles
 
-def deliver_articles(articles: list[str], prefix: str):
+def deliver_articles(articles: list[str]):
     markdown = concatenate_text(articles)
-    save_to_file(markdown, prefix)
     send_email(markdown, RECEPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
 
 # MARK: Entry point
@@ -100,7 +98,7 @@ if __name__ == "__main__":
     with managed_groq():
         video_ids = get_video_ids(channel_ids, days_back)
         articles = summarize_videos(video_ids, llm)
-        deliver_articles(articles, prefix=llm_model)
+        deliver_articles(articles)
         
     print("✅ Done.")
     

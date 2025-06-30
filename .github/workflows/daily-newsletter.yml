@@ -42,10 +42,3 @@ jobs:
       run: |
         python src/main.py
         
-    - name: Upload artifacts (if needed for debugging)
-      uses: actions/upload-artifact@v3
-      if: always()
-      with:
-        name: newsletter-outputs
-        path: summarized_articles/
-        retention-days: 7

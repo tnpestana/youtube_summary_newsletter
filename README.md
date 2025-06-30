@@ -71,12 +71,8 @@ llm:
   model: "llama-3.1-8b-instant"
 ```
 
-#### Output Settings
+#### Video Retrieval Settings
 ```yaml
-output:
-  folder: "summaries"
-  filename_prefix: "daily_summary"
-
 video_retrieval:
   published_after_days: 1 # Look for videos from the last N days
 ```
@@ -151,7 +147,6 @@ src/
     ├── youtube_utils.py             # YouTube API interactions
     ├── groq_tools.py                # Groq API integration
     ├── email_utils.py               # Email delivery
-    ├── file_utils.py                # File operations
     └── text_utils.py                # Text processing utilities
 
 .github/workflows/
