@@ -61,7 +61,7 @@ def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
                 continue
 
             print("🧠 Summarizing transcript with CrewAI agent...")
-            article = run_summary(transcript, llm_model)
+            article = run_summary(transcript, llm)
             articles.append(article)
             print(f"✅ Successfully processed video: {video_id}")
             
@@ -73,7 +73,13 @@ def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
     return articles
 
 def deliver_articles(articles: list[str]):
+    print(f"📊 Total articles to deliver: {len(articles)}")
+    if not articles:
+        print("⚠️ No articles to send - email will be empty")
+        return
+    
     markdown = concatenate_text(articles)
+    print(f"📝 Generated markdown content length: {len(markdown)} characters")
     send_email(markdown, RECEPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
 
 # MARK: Entry point
@@ -95,7 +101,9 @@ if __name__ == "__main__":
     
     with managed_groq():
         video_ids = get_video_ids(channel_ids, days_back)
+        print(f"🎬 Found {len(video_ids)} videos to process")
         articles = summarize_videos(video_ids, llm)
+        print(f"📝 Successfully processed {len(articles)} articles")
         deliver_articles(articles)
         
     print("✅ Done.")
