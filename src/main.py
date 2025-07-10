@@ -6,6 +6,7 @@ from agents.transcript_to_article_agent import run_summary
 from dotenv import load_dotenv
 from tools.email_utils import send_email
 from tools.groq_tools import managed_groq
+from tools.rate_limiting import rate_limited_processing_delay
 from tools.text_utils import concatenate_text
 from tools.youtube_utils import get_recent_video_ids, get_transcript
 from pathlib import Path
@@ -51,7 +52,7 @@ def get_video_ids(channel_ids: list[str], days_back: int) -> list[str]:
 
 def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
     articles = []
-    for video_id in video_ids:
+    for i, video_id in enumerate(video_ids):
         print(f"📹 Processing video: {video_id}")
         try:
             transcript = get_transcript(video_id)
@@ -64,6 +65,9 @@ def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
             article = run_summary(transcript, llm)
             articles.append(article)
             print(f"✅ Successfully processed video: {video_id}")
+            
+            # Add delay between video processing to avoid rate limits
+            rate_limited_processing_delay(i, len(video_ids), 10.0, "Waiting 10 seconds before next video...")
             
         except Exception as e:
             print(f"❌ Failed to process video {video_id}: {type(e).__name__}: {e}")
@@ -96,13 +100,11 @@ if __name__ == "__main__":
     channel_ids = APP_CONFIG.get("youtube_channel_ids", [])
     days_back = APP_CONFIG.get("video_retrieval", {}).get("published_after_days", 1)
     llm_model = APP_CONFIG.get("llm", {}).get("model")
-    llm_provider = APP_CONFIG.get("llm", {}).get("provider")
-    llm = f"{llm_provider}/{llm_model}"
     
     with managed_groq():
         video_ids = get_video_ids(channel_ids, days_back)
         print(f"🎬 Found {len(video_ids)} videos to process")
-        articles = summarize_videos(video_ids, llm)
+        articles = summarize_videos(video_ids, llm_model)
         print(f"📝 Successfully processed {len(articles)} articles")
         deliver_articles(articles)
         

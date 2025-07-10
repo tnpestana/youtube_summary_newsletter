@@ -81,8 +81,11 @@ def run_summary(transcript: str, model_name: str, max_retries: int = 3) -> str:
             print(f"❌ Attempt {attempt + 1}/{max_retries} failed: {error_type}")
             
             if attempt < max_retries - 1:
-                # Exponential backoff with jitter
-                delay = (2 ** attempt) + random.uniform(0, 1)
+                # Longer delays for rate limit errors
+                if "RateLimitError" in error_type:
+                    delay = 60 + (attempt * 30) + random.uniform(0, 10)  # 60s, 90s, 120s + jitter
+                else:
+                    delay = (2 ** attempt) + random.uniform(0, 1)  # Standard exponential backoff
                 print(f"⏳ Retrying in {delay:.1f} seconds...")
                 time.sleep(delay)
             else:
