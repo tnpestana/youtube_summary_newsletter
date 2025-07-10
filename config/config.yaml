@@ -8,4 +8,7 @@ youtube_channel_ids:
 
 llm:
   provider: "groq"
-  model: "llama-3.1-8b-instant"
+  models:
+    - "llama-3.3-70b-versatile"
+    - "qwen-2.5-32b"
+    - "llama-3.1-8b-instant"

@@ -10,9 +10,9 @@ editorial_prompt = (
         ✍️ Writing Style:
         - Write in **short, scannable paragraphs** (2-4 sentences max) for easy email reading
         - Use **conversational yet professional tone** - imagine explaining to an informed colleague
-        - Start with the most important information first (inverted pyramid style)
         - Include a **compelling headline** that clearly summarizes the main story
         - Add a **brief summary sentence** right after the headline to hook readers
+        - Add emojis to article titles
 
         📱 Email-Friendly Formatting:
         - Use **GitHub Flavored Markdown** that renders well in email clients
@@ -22,18 +22,8 @@ editorial_prompt = (
             - **Bold** for key terms and important points
             - Short bullet points (`-`) for lists when needed
             - Blank lines between all paragraphs for readability
-        - ❌ Avoid: Long paragraphs, excessive formatting, code blocks, blockquotes
-
-        📰 Content Guidelines:
-        - **Lead with the key story** in the first 1-2 paragraphs
-        - **Remove all promotional content**, sponsor mentions, and channel plugs
-        - **Preserve factual accuracy** - don't add information not in the transcript
-        - **Focus on newsworthy content** - what would interest newsletter readers?
-        - **Provide context** when acronyms or specialized terms are mentioned
-        - **End with implications** - why does this matter to readers?
 
         📧 Newsletter Format:
-        - Keep articles **concise but complete** (aim for 200-400 words per story)
         - Write as if this will be **one article in a daily digest**
         - Make it **skimmable** - readers should get the key points even if they just scan
 
@@ -41,9 +31,38 @@ editorial_prompt = (
     """
 )
 
-def run_summary(transcript: str, model_name: str, max_retries: int = 3) -> str:
+def run_summary(transcript: str, models: list[str], max_retries: int = 3) -> str:
     """
-    Run summary with retry logic for handling API failures
+    Run summary with model fallback logic for handling API failures
+    """
+    # If single model passed as string, convert to list for compatibility
+    if isinstance(models, str):
+        models = [models]
+    
+    last_error = None
+    
+    for model_name in models:
+        print(f"🔄 Trying model: {model_name}")
+        
+        try:
+            result = _try_model_with_retries(transcript, model_name, max_retries)
+            print(f"✅ Successfully used model: {model_name}")
+            return result
+            
+        except Exception as e:
+            last_error = e
+            print(f"❌ Model {model_name} failed after {max_retries} attempts")
+            print(f"🔄 Falling back to next model...")
+            continue
+    
+    # If we get here, all models failed
+    print(f"❌ All models failed. Last error: {last_error}")
+    raise last_error
+
+
+def _try_model_with_retries(transcript: str, model_name: str, max_retries: int) -> str:
+    """
+    Try a single model with retry logic
     """
     for attempt in range(max_retries):
         try:
@@ -78,7 +97,7 @@ def run_summary(transcript: str, model_name: str, max_retries: int = 3) -> str:
             
         except Exception as e:
             error_type = type(e).__name__
-            print(f"❌ Attempt {attempt + 1}/{max_retries} failed: {error_type}")
+            print(f"❌ {model_name} attempt {attempt + 1}/{max_retries} failed: {error_type}")
             
             if attempt < max_retries - 1:
                 # Longer delays for rate limit errors
@@ -89,5 +108,5 @@ def run_summary(transcript: str, model_name: str, max_retries: int = 3) -> str:
                 print(f"⏳ Retrying in {delay:.1f} seconds...")
                 time.sleep(delay)
             else:
-                print(f"❌ All retry attempts failed. Last error: {e}")
+                # All retries for this model failed, raise to trigger fallback
                 raise e

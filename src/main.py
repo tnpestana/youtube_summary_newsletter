@@ -50,7 +50,7 @@ def get_video_ids(channel_ids: list[str], days_back: int) -> list[str]:
     
     return all_video_ids
 
-def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
+def summarize_videos(video_ids: list[str], llm_models: list[str]) -> list[str]:
     articles = []
     for i, video_id in enumerate(video_ids):
         print(f"📹 Processing video: {video_id}")
@@ -62,7 +62,7 @@ def summarize_videos(video_ids: list[str], llm: str) -> list[str]:
                 continue
 
             print("🧠 Summarizing transcript with CrewAI agent...")
-            article = run_summary(transcript, llm)
+            article = run_summary(transcript, llm_models)
             articles.append(article)
             print(f"✅ Successfully processed video: {video_id}")
             
@@ -99,12 +99,12 @@ if __name__ == "__main__":
     
     channel_ids = APP_CONFIG.get("youtube_channel_ids", [])
     days_back = APP_CONFIG.get("video_retrieval", {}).get("published_after_days", 1)
-    llm_model = APP_CONFIG.get("llm", {}).get("model")
+    llm_models = APP_CONFIG.get("llm", {}).get("models", ["llama-3.1-8b-instant"])
     
     with managed_groq():
         video_ids = get_video_ids(channel_ids, days_back)
         print(f"🎬 Found {len(video_ids)} videos to process")
-        articles = summarize_videos(video_ids, llm_model)
+        articles = summarize_videos(video_ids, llm_models)
         print(f"📝 Successfully processed {len(articles)} articles")
         deliver_articles(articles)
         
