@@ -95,7 +95,7 @@ video_retrieval:
    | `GROQ_API_KEY` | Groq API key | `gsk_...` |
    | `SENDER_EMAIL` | Sender email address | `your-email@gmail.com` |
    | `SENDER_PASSWORD` | Email password/app password | `your-app-password` |
-   | `RECEPIENT_EMAIL` | Newsletter recipient email | `recipient@example.com` |
+   | `RECIPIENT_EMAIL` | Newsletter recipient email | `recipient@example.com` |
 
 3. **Email Setup for Gmail**
    - Enable 2-factor authentication

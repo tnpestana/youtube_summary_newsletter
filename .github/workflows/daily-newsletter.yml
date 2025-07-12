@@ -38,7 +38,7 @@ jobs:
         GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         SENDER_EMAIL: ${{ secrets.SENDER_EMAIL }}
         SENDER_PASSWORD: ${{ secrets.SENDER_PASSWORD }}
-        RECEPIENT_EMAIL: ${{ secrets.RECEPIENT_EMAIL }}
+        RECIPIENT_EMAIL: ${{ secrets.RECIPIENT_EMAIL }}
       run: |
         python src/main.py
         

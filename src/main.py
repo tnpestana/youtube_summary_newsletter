@@ -24,7 +24,7 @@ if os.path.exists(env_path):
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
 SENDER_PASSWORD = os.getenv("SENDER_PASSWORD")
-RECEPIENT_EMAIL = os.getenv("RECEPIENT_EMAIL")
+RECIPIENT_EMAIL = os.getenv("RECIPIENT_EMAIL")
 
 yaml_path = project_root / "config" / "config.yaml"
 with open(yaml_path, "r") as f:
@@ -84,7 +84,7 @@ def deliver_articles(articles: list[str]):
     
     markdown = concatenate_text(articles)
     print(f"📝 Generated markdown content length: {len(markdown)} characters")
-    send_email(markdown, RECEPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
+    send_email(markdown, RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
 
 # MARK: Entry point
 
