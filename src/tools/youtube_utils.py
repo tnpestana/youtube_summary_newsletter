@@ -2,6 +2,7 @@ import requests
 
 from datetime import datetime, timedelta
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
+from youtube_transcript_api.formatters import TextFormatter
 
 def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]:
     if published_after is None:
@@ -36,9 +37,18 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
 
     return video_ids
 
-def get_transcript(video_id, lang='en'):
+def get_transcript(video_id, lang='en', proxies=None):
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+        # Use proxies if provided to work around IP blocking
+        if proxies:
+            transcript = YouTubeTranscriptApi.get_transcript(
+                video_id, 
+                languages=[lang],
+                proxies=proxies
+            )
+        else:
+            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+            
         return " ".join([t["text"] for t in transcript])
     except TranscriptsDisabled:
         return "[Transcript disabled]"
