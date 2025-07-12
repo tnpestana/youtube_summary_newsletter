@@ -79,12 +79,21 @@ def summarize_videos(video_ids: list[str], llm_models: list[str]) -> list[str]:
 def deliver_articles(articles: list[str]):
     print(f"📊 Total articles to deliver: {len(articles)}")
     if not articles:
-        print("⚠️ No articles to send - email will be empty")
+        print("⚠️ No articles to send - skipping email delivery")
+        return
+    
+    if not all([RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD]):
+        print("❌ Missing email configuration - check RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD")
         return
     
     markdown = concatenate_text(articles)
     print(f"📝 Generated markdown content length: {len(markdown)} characters")
-    send_email(markdown, RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
+    
+    try:
+        send_email(markdown, RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
+    except Exception as e:
+        print(f"❌ Email delivery failed: {type(e).__name__}: {e}")
+        raise
 
 # MARK: Entry point
 
