@@ -19,7 +19,7 @@ project_root = src_dir.parent
 env_path = project_root / ".env"
 
 if os.path.exists(env_path):
-    load_dotenv(dotenv_path=env_path)
+    load_dotenv(dotenv_path=env_path, override=True)
 
 YOUTUBE_API_KEY = os.getenv("YOUTUBE_API_KEY")
 SENDER_EMAIL = os.getenv("SENDER_EMAIL")
