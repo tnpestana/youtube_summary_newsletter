@@ -107,12 +107,35 @@ def summarize_videos(video_ids: list[str], llm_models: list[str]) -> list[str]:
 
 def deliver_articles(articles: list[str]):
     print(f"📊 Total articles to deliver: {len(articles)}")
-    if not articles:
-        print("⚠️ No articles to send - skipping email delivery")
-        return
     
     if not all([RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD]):
         print("❌ Missing email configuration - check RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD")
+        return
+    
+    if not articles:
+        # Send a notification email about the failure
+        failure_message = f"""# YouTube Newsletter - Processing Failed
+
+Unfortunately, no articles could be processed today due to transcript fetching issues.
+
+**Issue Details:**
+- YouTube is blocking transcript access with bot detection
+- All proxy attempts failed with connection errors
+- This is a temporary issue that should resolve itself
+
+**Next Steps:**
+- The system will retry automatically on the next scheduled run
+- YouTube's anti-bot measures are becoming more aggressive
+- Consider implementing cookie-based authentication for more reliable access
+
+**Date:** {datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
+"""
+        print("⚠️ No articles to send - sending failure notification email")
+        try:
+            send_email(failure_message, RECIPIENT_EMAIL, SENDER_EMAIL, SENDER_PASSWORD)
+            print("📧 Failure notification email sent successfully")
+        except Exception as e:
+            print(f"❌ Failed to send notification email: {type(e).__name__}: {e}")
         return
     
     markdown = concatenate_text(articles)

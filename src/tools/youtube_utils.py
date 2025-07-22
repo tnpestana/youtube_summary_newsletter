@@ -50,6 +50,17 @@ def get_transcript(video_id, lang='en', proxies=None):
             'skip_download': True,
             'quiet': True,
             'no_warnings': True,
+            # Add user agent to avoid bot detection
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+            # Try to extract from embedded player
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['web'],
+                }
+            },
+            # Additional options to bypass restrictions
+            'cookiesfrombrowser': None,  # Don't use browser cookies in CI
+            'no_check_certificate': True,
         }
         
         # Add proxy configuration if provided
