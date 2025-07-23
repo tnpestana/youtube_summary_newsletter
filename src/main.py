@@ -53,40 +53,21 @@ def get_video_ids(channel_ids: list[str], days_back: int) -> list[str]:
 def summarize_videos(video_ids: list[str], llm_models: list[str]) -> list[str]:
     articles = []
     
-    # List of free public proxies to try (these change frequently)
-    proxy_options = [
-        None,  # Try direct connection first
-        {"http": "http://198.49.68.80:80", "https": "http://198.49.68.80:80"},
-        {"http": "http://47.74.152.29:8888", "https": "http://47.74.152.29:8888"},
-        {"http": "http://20.111.54.16:80", "https": "http://20.111.54.16:80"},
-    ]
-    
     for i, video_id in enumerate(video_ids):
         print(f"📹 Processing video: {video_id}")
-        transcript = None
         
-        # Try each proxy option until one works
-        for proxy_idx, proxies in enumerate(proxy_options):
-            try:
-                if proxies:
-                    print(f"🌐 Attempting with proxy {proxy_idx}...")
-                else:
-                    print("🌐 Attempting direct connection...")
-                    
-                transcript = get_transcript(video_id, proxies=proxies)
-                
-                if not transcript.startswith("["):
-                    print(f"✅ Successfully fetched transcript using {'direct connection' if not proxies else f'proxy {proxy_idx}'}")
-                    break  # Success!
-                else:
-                    print(f"⚠️ {'Direct connection' if not proxies else f'Proxy {proxy_idx}'} failed: {transcript}")
-                    
-            except Exception as e:
-                print(f"⚠️ {'Direct connection' if not proxies else f'Proxy {proxy_idx}'} error: {e}")
+        try:
+            print("🌐 Fetching transcript...")
+            transcript = get_transcript(video_id)
+            
+            if transcript.startswith("["):
+                print(f"⚠️ Transcript fetch failed: {transcript}")
+                print(f"❌ Skipping video {video_id}")
                 continue
-        
-        if not transcript or transcript.startswith("["):
-            print(f"❌ All connection attempts failed for video {video_id}")
+            
+            print("✅ Successfully fetched transcript")
+        except Exception as e:
+            print(f"❌ Failed to fetch transcript for video {video_id}: {type(e).__name__}: {e}")
             continue
 
         try:

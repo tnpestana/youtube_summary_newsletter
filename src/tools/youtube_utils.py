@@ -38,7 +38,7 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
 
     return video_ids
 
-def get_transcript(video_id, lang='en', proxies=None):
+def get_transcript(video_id, lang='en'):
     try:
         video_url = f"https://www.youtube.com/watch?v={video_id}"
         
@@ -62,13 +62,6 @@ def get_transcript(video_id, lang='en', proxies=None):
             'cookiesfrombrowser': None,  # Don't use browser cookies in CI
             'no_check_certificate': True,
         }
-        
-        # Add proxy configuration if provided
-        if proxies:
-            if 'http' in proxies:
-                ydl_opts['proxy'] = proxies['http']
-            elif 'https' in proxies:
-                ydl_opts['proxy'] = proxies['https']
         
         # Use temporary directory for subtitle files
         with tempfile.TemporaryDirectory() as temp_dir:
