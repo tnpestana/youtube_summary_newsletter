@@ -38,8 +38,17 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
 
 def get_transcript(video_id, lang='en'):
     try:
+        # Try the standard static method call first
         transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
         return " ".join([t["text"] for t in transcript])
+    except AttributeError:
+        # If static method doesn't exist, try instance method
+        try:
+            api = YouTubeTranscriptApi()
+            transcript = api.get_transcript(video_id, languages=[lang])
+            return " ".join([t["text"] for t in transcript])
+        except Exception as e:
+            return f"[Error with instance method: {str(e)}]"
     except TranscriptsDisabled:
         return "[Transcript disabled]"
     except NoTranscriptFound:
