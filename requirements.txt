@@ -4,4 +4,4 @@ langchain-groq
 markdown2
 python-dotenv
 requests
-youtube-transcript-api
+youtube-transcript-api==1.1.0

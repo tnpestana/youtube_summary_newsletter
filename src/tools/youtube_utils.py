@@ -38,26 +38,8 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
 
 def get_transcript(video_id, lang='en'):
     try:
-        # Try the standard static method call first (newer versions)
-        transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
-        return " ".join([t["text"] for t in transcript_list])
-    except AttributeError:
-        # If static method doesn't exist, use the older API with fetch/list methods
-        try:
-            # Try the fetch method (older API)
-            transcript_list = YouTubeTranscriptApi.fetch(video_id, lang)
-            return " ".join([t["text"] for t in transcript_list])
-        except Exception as fetch_error:
-            try:
-                # Try the list method as fallback
-                transcript_data = YouTubeTranscriptApi.list(video_id)
-                # Extract text from whatever format this returns
-                if isinstance(transcript_data, list):
-                    return " ".join([str(item.get("text", item)) for item in transcript_data])
-                else:
-                    return f"[Unexpected list format: {type(transcript_data)}]"
-            except Exception as list_error:
-                return f"[Error: Both fetch ({fetch_error}) and list ({list_error}) methods failed]"
+        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+        return " ".join([t["text"] for t in transcript])
     except TranscriptsDisabled:
         return "[Transcript disabled]"
     except NoTranscriptFound:
