@@ -42,19 +42,12 @@ def get_transcript(video_id, lang='en'):
         transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
         return " ".join([t["text"] for t in transcript_list])
     except AttributeError:
-        # If static method doesn't exist, try alternative APIs
+        # If static method doesn't exist, debug what methods are available
         try:
-            # Try the list_transcripts approach (newer API)
-            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
-            transcript = transcript_list.find_transcript([lang])
-            return " ".join([t["text"] for t in transcript.fetch()])
-        except Exception as list_error:
-            try:
-                # Try the fetch method directly
-                transcript_data = YouTubeTranscriptApi.fetch(video_id, languages=[lang])
-                return " ".join([t["text"] for t in transcript_data])
-            except Exception as fetch_error:
-                return f"[Error: Static method failed, list method failed ({list_error}), fetch method failed ({fetch_error})]"
+            available_methods = [method for method in dir(YouTubeTranscriptApi) if not method.startswith('_')]
+            return f"[Debug: Available methods in YouTubeTranscriptApi: {available_methods}]"
+        except Exception as debug_error:
+            return f"[Debug error: {debug_error}]"
     except TranscriptsDisabled:
         return "[Transcript disabled]"
     except NoTranscriptFound:
