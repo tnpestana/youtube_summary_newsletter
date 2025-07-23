@@ -39,16 +39,22 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
 def get_transcript(video_id, lang='en'):
     try:
         # Try the standard static method call first
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
-        return " ".join([t["text"] for t in transcript])
+        transcript_list = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+        return " ".join([t["text"] for t in transcript_list])
     except AttributeError:
-        # If static method doesn't exist, try instance method
+        # If static method doesn't exist, try alternative APIs
         try:
-            api = YouTubeTranscriptApi()
-            transcript = api.get_transcript(video_id, languages=[lang])
-            return " ".join([t["text"] for t in transcript])
-        except Exception as e:
-            return f"[Error with instance method: {str(e)}]"
+            # Try the list_transcripts approach (newer API)
+            transcript_list = YouTubeTranscriptApi.list_transcripts(video_id)
+            transcript = transcript_list.find_transcript([lang])
+            return " ".join([t["text"] for t in transcript.fetch()])
+        except Exception as list_error:
+            try:
+                # Try the fetch method directly
+                transcript_data = YouTubeTranscriptApi.fetch(video_id, languages=[lang])
+                return " ".join([t["text"] for t in transcript_data])
+            except Exception as fetch_error:
+                return f"[Error: Static method failed, list method failed ({list_error}), fetch method failed ({fetch_error})]"
     except TranscriptsDisabled:
         return "[Transcript disabled]"
     except NoTranscriptFound:
