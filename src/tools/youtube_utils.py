@@ -30,9 +30,17 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
 
         if scraperapi_key:
             # Use ScraperAPI to bypass IP blocks
-            client = ScraperAPIClient(scraperapi_key)
-            response = client.get(base_url, params=params)
-            data = response.json()
+            try:
+                client = ScraperAPIClient(scraperapi_key)
+                response = client.get(base_url, params=params)
+                data = response.json()
+            except Exception as e:
+                print(f"⚠️ ScraperAPI failed: {e}")
+                print("🔄 Falling back to direct requests...")
+                # Fallback to direct requests if ScraperAPI fails
+                response = requests.get(base_url, params=params)
+                response.raise_for_status()
+                data = response.json()
         else:
             # Fallback to direct requests for local development
             response = requests.get(base_url, params=params)
