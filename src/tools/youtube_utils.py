@@ -78,18 +78,66 @@ def get_transcript(video_id, lang='en'):
                 # Extract transcript data from the scraped HTML
                 html_content = response.text if hasattr(response, 'text') else str(response)
                 
-                # Look for transcript data in the HTML
-                transcript_pattern = r'"captionTracks":\[.*?\]'
+                # Look for transcript data in the YouTube page HTML
+                transcript_pattern = r'"captionTracks":\[(.*?)\]'
                 match = re.search(transcript_pattern, html_content)
                 
                 if match:
-                    # Found caption tracks, try to parse them
-                    # For now, fall back to direct API as this needs more complex parsing
-                    print("🔍 Found caption data in scraped HTML, but parsing not yet implemented")
-                    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
-                else:
-                    # No captions found in scraped content
-                    transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+                    print("🔍 Found caption data in scraped HTML, parsing...")
+                    try:
+                        # Parse the caption tracks JSON
+                        caption_tracks_str = '[' + match.group(1) + ']'
+                        caption_tracks = json.loads(caption_tracks_str)
+                        
+                        # Find the appropriate language track
+                        transcript_url = None
+                        for track in caption_tracks:
+                            if track.get('languageCode', '').startswith(lang):
+                                transcript_url = track.get('baseUrl')
+                                break
+                        
+                        # If no specific language found, use first available
+                        if not transcript_url and caption_tracks:
+                            transcript_url = caption_tracks[0].get('baseUrl')
+                        
+                        if transcript_url:
+                            print("📥 Fetching transcript XML through ScraperAPI...")
+                            # Fetch the transcript XML through ScraperAPI
+                            xml_response = client.get(transcript_url)
+                            xml_content = xml_response.text if hasattr(xml_response, 'text') else str(xml_response)
+                            
+                            # Parse the XML transcript
+                            import xml.etree.ElementTree as ET
+                            root = ET.fromstring(xml_content)
+                            
+                            # Extract text from XML
+                            transcript_texts = []
+                            for text_elem in root.findall('.//text'):
+                                text = text_elem.text
+                                if text:
+                                    # Clean up HTML entities and formatting
+                                    import html
+                                    clean_text = html.unescape(text.strip())
+                                    transcript_texts.append(clean_text)
+                            
+                            if transcript_texts:
+                                print(f"✅ Successfully parsed transcript via ScraperAPI! ({len(transcript_texts)} segments)")
+                                return " ".join(transcript_texts)
+                            else:
+                                print("⚠️ No text found in transcript XML")
+                        else:
+                            print("⚠️ No transcript URL found in caption tracks")
+                    
+                    except json.JSONDecodeError as e:
+                        print(f"⚠️ Failed to parse caption tracks JSON: {e}")
+                    except ET.ParseError as e:
+                        print(f"⚠️ Failed to parse transcript XML: {e}")
+                    except Exception as e:
+                        print(f"⚠️ Error parsing scraped transcript: {e}")
+                
+                # If HTML parsing failed, fall back to direct API (will likely fail in GitHub Actions)
+                print("🔄 Falling back to youtube-transcript-api...")
+                transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
                     
                 return " ".join([t["text"] for t in transcript])
                 
