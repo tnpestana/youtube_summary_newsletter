@@ -50,7 +50,19 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
 
 def get_transcript(video_id, lang='en'):
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+        scraperapi_key = os.getenv("SCRAPERAPI_KEY")
+        
+        if scraperapi_key:
+            # Use ScraperAPI as proxy for transcript fetching
+            proxies = {
+                'http': f'http://scraperapi:{scraperapi_key}@proxy-server.scraperapi.com:8001',
+                'https': f'http://scraperapi:{scraperapi_key}@proxy-server.scraperapi.com:8001'
+            }
+            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang], proxies=proxies)
+        else:
+            # Fallback to direct requests for local development
+            transcript = YouTubeTranscriptApi.get_transcript(video_id, languages=[lang])
+            
         return " ".join([t["text"] for t in transcript])
     except TranscriptsDisabled:
         return "[Transcript disabled]"
