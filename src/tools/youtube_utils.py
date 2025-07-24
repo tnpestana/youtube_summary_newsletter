@@ -1,4 +1,6 @@
+import os
 import requests
+from scraperapi_sdk import ScraperAPIClient
 
 from datetime import datetime, timedelta
 from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound
@@ -11,6 +13,9 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
     video_ids = []
     next_page_token = None
 
+    # Check if ScraperAPI key is available for GitHub Actions
+    scraperapi_key = os.getenv("SCRAPERAPI_KEY")
+    
     while True:
         params = {
             "part": "id",
@@ -23,9 +28,16 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
             "key": api_key
         }
 
-        response = requests.get(base_url, params=params)
-        response.raise_for_status()
-        data = response.json()
+        if scraperapi_key:
+            # Use ScraperAPI to bypass IP blocks
+            client = ScraperAPIClient(scraperapi_key)
+            response = client.get(base_url, params=params)
+            data = response.json()
+        else:
+            # Fallback to direct requests for local development
+            response = requests.get(base_url, params=params)
+            response.raise_for_status()
+            data = response.json()
 
         for item in data.get("items", []):
             video_ids.append(item["id"]["videoId"])
