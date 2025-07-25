@@ -30,8 +30,6 @@ jobs:
         pip install -r requirements.txt
         
     - name: Test transcript fetching
-      env:
-        SCRAPERAPI_KEY: ${{ secrets.SCRAPERAPI_KEY }}
       run: |
         python -c "
         import os
@@ -43,11 +41,7 @@ jobs:
         test_video_id = 'dQw4w9WgXcQ'  # Rick Astley - Never Gonna Give You Up (public, always has transcript)
         
         print(f'🧪 Testing transcript fetch for video: {test_video_id}')
-        
-        if os.getenv('SCRAPERAPI_KEY'):
-            print('🔑 ScraperAPI key found - will use proxy')
-        else:
-            print('⚠️ No ScraperAPI key - using direct requests')
+        print('📡 Using direct YouTube Transcript API')
         
         try:
             transcript = get_transcript(test_video_id)
