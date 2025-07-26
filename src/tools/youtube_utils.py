@@ -8,34 +8,53 @@ def get_recent_video_ids(channel_id, api_key, published_after=None) -> list[str]
     if published_after is None:
         published_after = (datetime.now() - timedelta(days=1)).isoformat("T") + "Z"
 
+    print(f"🔍 Fetching videos from channel {channel_id} published after {published_after}")
     base_url = "https://www.googleapis.com/youtube/v3/search"
     video_ids = []
     next_page_token = None
+    page_count = 0
 
-    while True:
-        params = {
-            "part": "id",
-            "channelId": channel_id,
-            "publishedAfter": published_after,
-            "type": "video",
-            "order": "date",
-            "maxResults": 50,
-            "pageToken": next_page_token,
-            "key": api_key
-        }
+    try:
+        while True:
+            page_count += 1
+            params = {
+                "part": "id",
+                "channelId": channel_id,
+                "publishedAfter": published_after,
+                "type": "video",
+                "order": "date",
+                "maxResults": 50,
+                "pageToken": next_page_token,
+                "key": api_key
+            }
 
-        response = requests.get(base_url, params=params)
-        response.raise_for_status()
-        data = response.json()
+            print(f"📡 Making YouTube Data API request (page {page_count})...")
+            response = requests.get(base_url, params=params)
+            response.raise_for_status()
+            data = response.json()
+            
+            page_video_count = len(data.get("items", []))
+            print(f"📥 Received {page_video_count} videos from API (page {page_count})")
 
-        for item in data.get("items", []):
-            video_ids.append(item["id"]["videoId"])
+            for item in data.get("items", []):
+                video_ids.append(item["id"]["videoId"])
 
-        next_page_token = data.get("nextPageToken")
-        if not next_page_token:
-            break
-
-    return video_ids
+            next_page_token = data.get("nextPageToken")
+            if not next_page_token:
+                break
+        
+        print(f"✅ Successfully fetched {len(video_ids)} video IDs from channel {channel_id}")
+        return video_ids
+        
+    except requests.exceptions.RequestException as e:
+        print(f"❌ YouTube Data API request failed for channel {channel_id}: {e}")
+        return []
+    except KeyError as e:
+        print(f"❌ Unexpected API response format for channel {channel_id}: missing {e}")
+        return []
+    except Exception as e:
+        print(f"❌ Unexpected error fetching videos for channel {channel_id}: {type(e).__name__}: {e}")
+        return []
 
 def get_transcript(video_id, lang='en'):
     # Try youtube-transcript-api first (primary method)
